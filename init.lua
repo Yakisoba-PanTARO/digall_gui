@@ -1,3 +1,5 @@
+-- TODO: show_formspecを潰す
+
 -- Formspec表示
 local function show_formspec(name, mode)
 	-- Mode1:機能一覧
@@ -9,12 +11,13 @@ local function show_formspec(name, mode)
 		end
 		-- Formspec表示
 		minetest.show_formspec(name, "digall:setting",
-			"size[3,4;]"..
+			"size[3,4.8;]"..
 			"button[0,0;3,1;switch;"..modetext.."]"..
 			"button[0,0.8;3,1;set_target;Set Target]"..
 			"button[0,1.6;3,1;remove_target;Remove Target]"..
 			"button[0,2.4;3,1;set_default_targets;Set Default Targets]"..
-			"button[0,3.2;3,1;clear_targets;Clear Targets]"
+			"button[0,3.2;3,1;clear_targets;Clear Targets]"..
+			"button[0,4;3,1;set_range;Set Default Range]"
 		)
 	-- Mode2:ターゲット設定(追加)
 	elseif mode == 2 then
@@ -33,6 +36,16 @@ local function show_formspec(name, mode)
 			"button[0,0;2,1;back;Back]"..
 			"field[3,0.5;4,1;target_name;Target Node Name;default:dirt]"..
 			"button[0,1.1;7,1;remove;Remove]"
+		)
+	-- Mode4:範囲変更
+	elseif mode == 4 then
+		minetest.show_formspec(name, "digall:set_range",
+			"size[7,2;]"..
+			"button[0,0;2,1;back;Back]"..
+			"field[3,0.5;1,1;range_x;X;3]"..
+			"field[4,0.5;1,1;range_y;Y;3]"..
+			"field[5,0.5;1,1;range_z;Z;3]"..
+			"button[0,1.1;7,1;set;Set]"
 		)
 	end
 end
@@ -70,6 +83,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		elseif fields.clear_targets then
 			digall.clear_target_setting()
 			minetest.chat_send_player(name, "DigAll: Targets Cleared.")
+		-- Mode4(範囲変更メニュー)表示
+		elseif fields.set_range then
+			show_formspec(name, 4)
 		end
 	-- ターゲット設定(追加)
 	elseif formname == "digall:set_target" then
@@ -105,6 +121,23 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			-- 登録されてない場合
 			else
 				minetest.chat_send_player(name, "DigAll: Target node doesn't register.")
+			end
+		-- 戻る（Back）ボタン
+		elseif fields.back then
+			show_formspec(name, 1)
+		end
+	-- 範囲変更
+	elseif formname == "digall:set_range" then
+		if fields.set then
+			local x = tonumber(fields.range_x)
+			local y = tonumber(fields.range_y)
+			local z = tonumber(fields.range_z)
+			if type(x) ~= "number"
+			or type(y) ~= "number"
+			or type(z) ~= "number" then
+				minetest.chat_send_player(name, "DigAll: Range is incorrect.")
+			else
+				digall.set_default_range({vector.new(x,y,z)})
 			end
 		-- 戻る（Back）ボタン
 		elseif fields.back then
