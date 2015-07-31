@@ -19,15 +19,12 @@ local function show_formspec(name, mode)
 	-- Mode2:ターゲット設定(追加)
 	elseif mode == 2 then
 		minetest.show_formspec(name, "digall:set_target",
-			"size[7,4.5;]"..
+			"size[7,4;]"..
 			"button[0,0;2,1;back;Back]"..
 			"field[3,0.5;4,1;target_name;Target Node Name;default:dirt]"..
-			"field[3,1.6;4,1;algorithm_name;Algorithm Name;default_algorithm]"..
-			"label[2.7,2.1;Argument]"..
-			"field[3,3.2;1,1;argument_x;X;3]"..
-			"field[4,3.2;1,1;argument_y;Y;3]"..
-			"field[5,3.2;1,1;argument_z;Z;3]"..
-			"button[0,3.8;7,1;set;Set]"
+			"field[3,1.6;4,1;algorithm_name;Algorithm Name;digall:default]"..
+			"field[3,2.7;4,1;argument;Argument;{{x = 3, y = 3, z = 3}}]"..
+			"button[0,3.3;7,1;set;Set]"
 		)
 	-- Mode3:ターゲット削除
 	elseif mode == 3 then
@@ -89,20 +86,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				can_set = false
 				minetest.chat_send_player(name, "DigAll: Specified algorithm doesn't exist.")
 			end
-			-- 範囲設定が間違っている
-			local x = tonumber(fields.argument_x)
-			local y = tonumber(fields.argument_y)
-			local z = tonumber(fields.argument_z)
-			if type(x) ~= "number"
-			or type(y) ~= "number"
-			or type(z) ~= "number" then
-				can_set = false
-				minetest.chat_send_player(name, "DigAll: Argument is incorrect.")
-			end
 			-- can_setがtrueのままだったら登録
 			if can_set then
 				minetest.chat_send_player(name, "DigAll: Target Set.")
-				digall.register_target(fields.target_name,fields.algorithm_name,{vector.new(x,y,z)})
+				digall.register_target(fields.target_name,fields.algorithm_name,minetest.deserialize("return "..fields.argument))
 			end
 		-- 戻る（Back）ボタン
 		elseif fields.back then
