@@ -137,6 +137,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			or type(z) ~= "number" then
 				minetest.chat_send_player(name, "DigAll: Range is incorrect.")
 			else
+				minetest.chat_send_player(name, "DigAll: Range Set.")
 				digall.set_default_range({vector.new(x,y,z)})
 			end
 		-- 戻る（Back）ボタン
