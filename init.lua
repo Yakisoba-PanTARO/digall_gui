@@ -69,12 +69,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		elseif fields.set_default_targets then
 			digall.set_default_target_setting()
 			minetest.chat_send_player(name, "DigAll: Default Targets Set.")
-			show_formspec(name, 1)
 		-- ターゲットを全削除
 		elseif fields.clear_targets then
 			digall.clear_target_setting()
 			minetest.chat_send_player(name, "DigAll: Targets Cleared.")
-			show_formspec(name, 1)
 		end
 	-- ターゲット設定(追加)
 	elseif formname == "digall:set_target" then
@@ -115,10 +113,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.remove then
 			-- 登録されてたら実行
 			if digall.registered_targets[fields.target_name] then
-				--digall.remove_target(fields.target_name)
-				-- ⇑これバグあり
-				-- 代替
-				digall.registered_targets[fields.target_name] = nil
+				digall.remove_target(fields.target_name)
 				minetest.chat_send_player(name, "DigAll: Target Removed.")
 			-- 登録されてない場合
 			else
