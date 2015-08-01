@@ -35,6 +35,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 end)
 
+-- コマンド
+minetest.register_chatcommand("digall:gui", {
+	description = "DigAll Settings GUI",
+	func = function(name)
+		digall_gui.mainmenu(minetest.get_player_by_name(name))
+	end
+})
+
 -- Inventory Plus用の動作
 if minetest.get_modpath("inventory_plus") then
 	-- ボタンをInventory Plusに登録
