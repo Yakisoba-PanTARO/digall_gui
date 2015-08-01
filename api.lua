@@ -12,11 +12,3 @@ function digall_gui.register(name, text, func)
 		end
 	end)
 end
-
--- ONOFF用ボタンのテキスト
-function digall_gui.check_bool()
-	if digall.switch then
-		return "Disable DigAll"
-	end
-	return "Enable DigAll"
-end
